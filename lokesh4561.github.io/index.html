@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lokesh Reddy Maddali · Data Engineer</title>
+  <meta name="description" content="Lokesh Reddy Maddali — Data Engineer building production pipelines on Azure Databricks, PySpark and AWS, plus RAG and LLM data systems.">
+  <meta property="og:title" content="Lokesh Reddy Maddali · Data Engineer">
+  <meta property="og:description" content="Production data pipelines, Lakehouse platforms, and AI data systems. Live projects inside.">
+  <meta property="og:image" content="https://lokesh4561.github.io/assets/air-quality-dashboard.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231f3a5f'/><text x='50%' y='54%' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-weight='700' font-size='28' fill='white'>LM</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --ink: #14213d;
+      --muted: #5b6475;
+      --line: #e3e7ee;
+      --navy: #1f3a5f;
+      --accent: #2e86ab;
+      --accent-soft: #e6f2f7;
+      --good: #1a7f4e;
+      --shadow: 0 1px 2px rgba(20, 33, 61, .06), 0 8px 24px rgba(20, 33, 61, .06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1420;
+        --surface: #141d2b;
+        --ink: #e8edf5;
+        --muted: #9aa6b8;
+        --line: #243145;
+        --navy: #8fb3e0;
+        --accent: #5fb7d9;
+        --accent-soft: #15303d;
+        --good: #4cc38a;
+        --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 22px; }
+    .nav-links a { color: var(--muted); font-weight: 500; font-size: 15px; }
+    .nav-links a:hover { color: var(--ink); text-decoration: none; }
+
+    /* Hero */
+    .hero { padding: 84px 0 64px; }
+    .status {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 500; color: var(--good);
+      background: color-mix(in srgb, var(--good) 12%, transparent);
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
+    h1 { font-size: clamp(36px, 6vw, 58px); line-height: 1.08; letter-spacing: -.03em; margin: 20px 0 16px; }
+    .hero p.lead { font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); max-width: 680px; margin: 0 0 30px; }
+    .hero p.lead strong { color: var(--ink); font-weight: 600; }
+    .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 18px; border-radius: 10px; font-weight: 600; font-size: 15px;
+      border: 1px solid var(--line); color: var(--ink); background: var(--surface);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover { text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn.primary { background: var(--navy); border-color: var(--navy); color: #fff; }
+    @media (prefers-color-scheme: dark) { .btn.primary { color: #0d1420; } }
+    .btn svg { width: 18px; height: 18px; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 48px; }
+    .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+    .stat b { display: block; font-size: 26px; letter-spacing: -.02em; color: var(--navy); }
+    .stat span { font-size: 14px; color: var(--muted); }
+
+    /* Sections */
+    section { padding: 56px 0; }
+    .eyebrow { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+    h2 { font-size: clamp(26px, 3.6vw, 34px); letter-spacing: -.02em; margin: 6px 0 28px; }
+
+    /* Projects */
+    .project {
+      display: grid; grid-template-columns: 1.05fr 1fr; gap: 0;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+      overflow: hidden; margin-bottom: 22px; box-shadow: var(--shadow);
+    }
+    .project .shot { background: var(--accent-soft); min-height: 260px; display: flex; align-items: center; justify-content: center; }
+    .project .shot img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
+    .project .body { padding: 26px 26px 24px; display: flex; flex-direction: column; }
+    .tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; width: fit-content; }
+    .project h3 { font-size: 22px; letter-spacing: -.01em; margin: 12px 0 8px; }
+    .project p { color: var(--muted); margin: 0 0 14px; }
+    .project ul { margin: 0 0 16px; padding-left: 18px; color: var(--muted); }
+    .project li { margin-bottom: 4px; }
+    .project li b { color: var(--ink); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .chip { font-size: 12.5px; font-weight: 500; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--muted); }
+    .project .btns { margin-top: auto; }
+    .project .btn { padding: 9px 14px; font-size: 14px; }
+
+    /* Illustrations for projects without screenshots */
+    .illus { width: 82%; max-width: 380px; }
+
+    /* Experience */
+    .timeline { border-left: 2px solid var(--line); margin-left: 6px; }
+    .job { position: relative; padding: 0 0 30px 26px; }
+    .job::before { content: ""; position: absolute; left: -8px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); }
+    .job h3 { margin: 0; font-size: 18px; }
+    .job .meta { color: var(--muted); font-size: 14.5px; margin: 2px 0 10px; }
+    .job ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .job li { margin-bottom: 4px; }
+    .job li b { color: var(--ink); }
+
+    /* Skills */
+    .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .skill { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+    .skill h4 { margin: 0 0 10px; font-size: 15px; }
+    .skill .chips { margin: 0; }
+
+    /* Certifications */
+    .certs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .cert { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+    .badge { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; }
+    .cert b { display: block; }
+    .cert span { color: var(--muted); font-size: 14px; }
+
+    /* Contact */
+    .contact { background: var(--navy); color: #fff; border-radius: 20px; padding: 44px 32px; text-align: center; }
+    @media (prefers-color-scheme: dark) { .contact { background: #1a2b44; } }
+    .contact h2 { color: #fff; margin-bottom: 10px; }
+    .contact p { color: rgba(255,255,255,.8); margin: 0 0 24px; }
+    .contact .btns { justify-content: center; }
+    .contact .btn { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.25); color: #fff; }
+
+    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 36px 0 48px; }
+
+    @media (max-width: 820px) {
+      .nav-links { display: none; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .project { grid-template-columns: 1fr; }
+      .project .shot { min-height: 200px; max-height: 280px; }
+      .skills { grid-template-columns: 1fr 1fr; }
+      .certs { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .hero { padding-top: 56px; }
+      .skills { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">Lokesh<span>.</span></a>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="status">Open to Data Engineering roles · Bangalore</span>
+    <h1>Hi, I'm Lokesh.<br>I build data pipelines that run themselves.</h1>
+    <p class="lead">
+      Data Engineer with <strong>3+ years</strong> building production pipelines on
+      <strong>Azure Databricks, PySpark and AWS</strong>, designing Lakehouse platforms, and building
+      <strong>RAG and LLM data systems</strong>. Certified in Microsoft Fabric (DP-700) and AWS Data Engineering.
+    </p>
+    <div class="btns">
+      <a class="btn primary" href="#projects">See my projects</a>
+      <a class="btn" href="assets/Lokesh_Reddy_Maddali_Resume.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Resume
+      </a>
+      <a class="btn" href="https://github.com/Lokesh4561" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://www.linkedin.com/in/lokesh-reddy-maddali-455815446/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.3V9h3.4v1.6c.5-.9 1.7-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.5V9h3.6v11.5zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7C24 .8 23.2 0 22.2 0z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>10+</b><span>production pipelines owned</span></div>
+      <div class="stat"><b>1 TB+</b><span>datasets processed</span></div>
+      <div class="stat"><b>~30%</b><span>faster runs &amp; fewer failures</span></div>
+      <div class="stat"><b>3</b><span>projects on GitHub, 1 live</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="eyebrow">// Projects</div>
+    <h2>Things I've built</h2>
+
+    <!-- Project 1: Air quality -->
+    <article class="project">
+      <div class="shot">
+        <img src="assets/air-quality-dashboard.jpg" alt="India Air Quality dashboard showing a map of Indian cities, AQI ranking and history charts" loading="lazy">
+      </div>
+      <div class="body">
+        <span class="tag">Live · updates every hour</span>
+        <h3>India Air Quality Pipeline</h3>
+        <p>A serverless pipeline that tracks air pollution across 20 Indian cities every hour, computes the official Indian AQI, and flags dangerous spikes.</p>
+        <ul>
+          <li>Bronze → silver → gold layers with <b>idempotent upserts</b> and the official <b>CPCB AQI</b> formula</li>
+          <li><b>Automated data quality gates</b>, z-score spike alerts, and forecast-accuracy tracking</li>
+          <li>Batched API calls cut each run from <b>282s to 32s</b>; runs free on GitHub Actions</li>
+        </ul>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">PostgreSQL</span><span class="chip">GitHub Actions</span><span class="chip">Streamlit</span><span class="chip">pandas</span>
+        </div>
+        <div class="btns">
+          <a class="btn primary" href="https://india-air-quality.streamlit.app" target="_blank" rel="noopener">Live demo ↗</a>
+          <a class="btn" href="https://github.com/Lokesh4561/india-air-quality-pipeline" target="_blank" rel="noopener">Code</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 2: DocQA -->
+    <article class="project">
+      <div class="shot">
+        <svg class="illus" viewBox="0 0 380 240" role="img" aria-label="Diagram: documents are chunked, embedded into a vector database, retrieved and answered by an LLM with citations">
+          <defs>
+            <style>
+              .bx{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+              .tx{font:600 13px Inter,sans-serif;fill:var(--ink)}
+              .sm{font:500 11px Inter,sans-serif;fill:var(--muted)}
+              .ar{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#h)}
+            </style>
+            <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+          </defs>
+          <rect class="bx" x="10" y="30" width="96" height="58" rx="10"/><text class="tx" x="58" y="56" text-anchor="middle">Documents</text><text class="sm" x="58" y="74" text-anchor="middle">~80 articles</text>
+          <rect class="bx" x="142" y="30" width="96" height="58" rx="10"/><text class="tx" x="190" y="56" text-anchor="middle">Chunk +</text><text class="tx" x="190" y="73" text-anchor="middle">Embed</text>
+          <rect class="bx" x="274" y="30" width="96" height="58" rx="10"/><text class="tx" x="322" y="56" text-anchor="middle">pgvector</text><text class="sm" x="322" y="74" text-anchor="middle">HNSW index</text>
+          <rect class="bx" x="274" y="150" width="96" height="58" rx="10"/><text class="tx" x="322" y="176" text-anchor="middle">Retrieve</text><text class="sm" x="322" y="194" text-anchor="middle">top-k chunks</text>
+          <rect class="bx" x="142" y="150" width="96" height="58" rx="10"/><text class="tx" x="190" y="176" text-anchor="middle">LLM</text><text class="sm" x="190" y="194" text-anchor="middle">Groq</text>
+          <rect class="bx" x="10" y="150" width="96" height="58" rx="10"/><text class="tx" x="58" y="176" text-anchor="middle">Answer</text><text class="sm" x="58" y="194" text-anchor="middle">with citations</text>
+          <path class="ar" d="M106 59H140"/><path class="ar" d="M238 59H272"/><path class="ar" d="M322 88V148"/><path class="ar" d="M274 179H240"/><path class="ar" d="M142 179H108"/>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="tag">AI · RAG</span>
+        <h3>DocQA: RAG Platform</h3>
+        <p>Ask questions about a document collection and get answers with citations, backed by a measured retrieval pipeline.</p>
+        <ul>
+          <li><b>Idempotent ingestion</b>: chunking, embeddings, and an HNSW vector index in pgvector</li>
+          <li>FastAPI service returning <b>cited LLM answers</b></li>
+          <li>98-question LLM-generated eval set: <b>hit@1 97.96%</b>, <b>MRR 0.98</b></li>
+        </ul>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">pgvector</span><span class="chip">sentence-transformers</span><span class="chip">Groq LLM</span>
+        </div>
+        <div class="btns">
+          <a class="btn primary" href="https://github.com/Lokesh4561/rag-docqa-platform" target="_blank" rel="noopener">Code ↗</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 3: Kafka -->
+    <article class="project">
+      <div class="shot">
+        <svg class="illus" viewBox="0 0 380 200" role="img" aria-label="Diagram: a Python producer sends stock prices to a Kafka topic, read by a consumer">
+          <defs>
+            <style>
+              .bx2{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+              .tx2{font:600 13px Inter,sans-serif;fill:var(--ink)}
+              .sm2{font:500 11px Inter,sans-serif;fill:var(--muted)}
+              .ar2{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#h2)}
+            </style>
+            <marker id="h2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+          </defs>
+          <rect class="bx2" x="10" y="70" width="100" height="60" rx="10"/><text class="tx2" x="60" y="97" text-anchor="middle">Producer</text><text class="sm2" x="60" y="115" text-anchor="middle">stock ticks</text>
+          <rect class="bx2" x="140" y="60" width="100" height="80" rx="10"/><text class="tx2" x="190" y="94" text-anchor="middle">Kafka</text><text class="sm2" x="190" y="112" text-anchor="middle">topic</text>
+          <rect class="bx2" x="270" y="70" width="100" height="60" rx="10"/><text class="tx2" x="320" y="97" text-anchor="middle">Consumer</text><text class="sm2" x="320" y="115" text-anchor="middle">Python</text>
+          <path class="ar2" d="M110 100H138"/><path class="ar2" d="M240 100H268"/>
+          <text class="sm2" x="190" y="40" text-anchor="middle">AAPL · TSLA · AMZN · MSFT</text>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="tag">Streaming</span>
+        <h3>Kafka Stock Market Stream</h3>
+        <p>A real-time streaming pipeline: a Python producer publishes stock price events to a Kafka topic, and a consumer processes them as they arrive.</p>
+        <ul>
+          <li>Event-driven <b>producer / consumer</b> design with Apache Kafka</li>
+          <li>Next step: land events in an <b>S3 data lake</b> for Athena queries</li>
+        </ul>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">Apache Kafka</span><span class="chip">AWS</span>
+        </div>
+        <div class="btns">
+          <a class="btn primary" href="https://github.com/Lokesh4561/kafka-stock-market-project" target="_blank" rel="noopener">Code ↗</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow">// Experience</div>
+    <h2>Where I've worked</h2>
+    <div class="timeline">
+      <div class="job">
+        <h3>Data Engineer · Cenit Technologies</h3>
+        <div class="meta">Oct 2025 – Present · Bangalore, India</div>
+        <ul>
+          <li>Build and maintain <b>10+</b> production pipelines on Azure Databricks and Data Factory, over <b>10+</b> sources and <b>1 TB+</b> datasets</li>
+          <li>Designed a Delta Lake Lakehouse (bronze/silver/gold) with dimensional and Data Vault 2.0 models</li>
+          <li>Tuned Spark jobs, cutting run time by <b>~30%</b> and cloud cost by <b>~15%</b>; reduced pipeline failures by <b>~30%</b></li>
+        </ul>
+      </div>
+      <div class="job">
+        <h3>Data Engineering Intern · Travelers Insurance</h3>
+        <div class="meta">Aug 2024 – Sep 2025 · USA</div>
+        <ul>
+          <li>Built Python and SQL ETL pipelines for insurance policy and claims data across <b>5+</b> datasets, with validation and reconciliation</li>
+        </ul>
+      </div>
+      <div class="job">
+        <h3>Data Engineer · Infosys</h3>
+        <div class="meta">Jan 2022 – Dec 2023 · Chennai, India</div>
+        <ul>
+          <li>Designed and maintained <b>10+</b> ETL pipelines across legacy systems and stored procedures</li>
+          <li>Cut ETL processing time by <b>35%</b> through SQL optimization; delivered data for a dashboard used by <b>10+</b> stakeholders</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="eyebrow">// Skills</div>
+    <h2>What I work with</h2>
+    <div class="skills">
+      <div class="skill"><h4>Languages</h4><div class="chips"><span class="chip">Python</span><span class="chip">SQL</span><span class="chip">PySpark</span><span class="chip">Scala</span></div></div>
+      <div class="skill"><h4>Azure &amp; Databricks</h4><div class="chips"><span class="chip">Databricks</span><span class="chip">Delta Lake</span><span class="chip">Data Factory</span><span class="chip">ADLS Gen2</span><span class="chip">Synapse</span><span class="chip">Fabric</span><span class="chip">Purview</span></div></div>
+      <div class="skill"><h4>AWS</h4><div class="chips"><span class="chip">S3</span><span class="chip">Glue</span><span class="chip">Lambda</span><span class="chip">Step Functions</span><span class="chip">Redshift</span><span class="chip">Kinesis</span><span class="chip">EMR</span></div></div>
+      <div class="skill"><h4>Data platforms</h4><div class="chips"><span class="chip">Snowflake</span><span class="chip">BigQuery</span><span class="chip">PostgreSQL</span><span class="chip">SQL Server</span><span class="chip">Oracle</span></div></div>
+      <div class="skill"><h4>Orchestration &amp; DevOps</h4><div class="chips"><span class="chip">Airflow</span><span class="chip">dbt</span><span class="chip">Git</span><span class="chip">Azure DevOps</span><span class="chip">GitHub Actions</span><span class="chip">Terraform</span><span class="chip">Docker</span></div></div>
+      <div class="skill"><h4>AI &amp; GenAI</h4><div class="chips"><span class="chip">RAG</span><span class="chip">Embeddings</span><span class="chip">pgvector</span><span class="chip">LangChain</span><span class="chip">LLM evaluation</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="eyebrow">// Certifications</div>
+    <h2>Certified in</h2>
+    <div class="certs">
+      <div class="cert"><div class="badge" style="background:#0078d4">DP<br>700</div><div><b>Fabric Data Engineer Associate</b><span>Microsoft Certified · DP-700</span></div></div>
+      <div class="cert"><div class="badge" style="background:#ff9900">AWS</div><div><b>AWS Certified Data Engineer – Associate</b><span>Amazon Web Services</span></div></div>
+      <div class="cert"><div class="badge" style="background:#0078d4">DP<br>900</div><div><b>Azure Data Fundamentals</b><span>Microsoft Certified · DP-900</span></div></div>
+      <div class="cert"><div class="badge" style="background:#0078d4">DP<br>750</div><div><b>Microsoft Certification</b><span>DP-750</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="education" style="padding-top:20px">
+  <div class="wrap">
+    <div class="eyebrow">// Education</div>
+    <h2>Education</h2>
+    <div class="certs">
+      <div class="cert"><div class="badge" style="background:var(--navy)">MS</div><div><b>Master's in Information Technology</b><span>Webster University, USA · 2024 – 2025</span></div></div>
+      <div class="cert"><div class="badge" style="background:var(--navy)">BE</div><div><b>B.E., Electronics &amp; Communication</b><span>R.M.D. Engineering College, Chennai · 2021</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <h2>Let's talk</h2>
+      <p>I'm looking for Data Engineering roles. The fastest way to reach me is email.</p>
+      <div class="btns">
+        <a class="btn" href="mailto:lokeshreddymaddali@gmail.com">lokeshreddymaddali@gmail.com</a>
+        <a class="btn" href="https://www.linkedin.com/in/lokesh-reddy-maddali-455815446/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="assets/Lokesh_Reddy_Maddali_Resume.pdf" target="_blank" rel="noopener">Download resume</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© <span id="year">2026</span> Lokesh Reddy Maddali · Built with HTML &amp; CSS, hosted on GitHub Pages</footer>
+
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
