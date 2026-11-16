@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lokesh Reddy Maddali, Data Engineer (Azure Databricks, PySpark, AWS)</title>
-  <meta name="description" content="Lokesh Reddy Maddali, Data Engineer building production pipelines on Azure Databricks, PySpark and AWS, plus RAG and LLM data systems. Open to roles in Bangalore, Chennai and Hyderabad.">
+  <title>Lokesh Reddy Maddali, Data Engineer (Databricks, PySpark, AWS, AI agents)</title>
+  <meta name="description" content="Lokesh Reddy Maddali, Data Engineer building production pipelines on Azure Databricks, PySpark and AWS, plus AI agents, RAG and LLM data systems. Open to roles in Bangalore, Chennai and Hyderabad.">
   <meta property="og:title" content="Lokesh Reddy Maddali, Data Engineer">
-  <meta property="og:description" content="Production data pipelines, lakehouse platforms and AI data systems, with two projects running every hour.">
+  <meta property="og:description" content="Production data pipelines, lakehouse platforms and AI data systems, with three projects running every hour and an AI agent that diagnoses their failures.">
   <meta property="og:image" content="https://lokesh4561.github.io/assets/air-quality-dashboard.jpg">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%232547f4'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-weight='700' font-size='28' fill='white'>LM</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -213,6 +213,41 @@
     }
     .mail:hover { color: var(--accent); }
     footer { padding: 28px 0 40px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+    /* Live systems: same language as the Pipeline Doctor dashboard */
+    :root { --ok: #0ca30c; --ok-ink: #006300; --bad: #d03b3b; --run: #fab219; --idle: #a9a8a2; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ok-ink: #4cc94c; --idle: #5d5c57; } }
+    :root[data-theme="dark"] { --ok-ink: #4cc94c; --idle: #5d5c57; }
+    section.live { padding: 64px 0 72px; background: var(--surface); border-top: 0; }
+    .live-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 26px; }
+    .live-head h2 { margin: 0; font-size: clamp(1.8rem, 3.6vw, 2.6rem); }
+    .live-head p { margin: 6px 0 0; color: var(--muted); max-width: 36em; }
+    .pulse { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .9rem; color: var(--ok-ink); white-space: nowrap; }
+    .pulse::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); animation: blink 2s infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
+    .pulse small { color: var(--muted); font-weight: 400; margin-left: 4px; }
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+    .tile, .wf { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+    .tile .k { color: var(--muted); font-size: .88rem; }
+    .tile .v { font-family: var(--display); font-weight: 900; font-size: clamp(1.9rem, 3.4vw, 2.5rem); line-height: 1.1; margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+    .tile .n { color: var(--muted); font-size: .82rem; }
+    .wfs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .wf-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+    .wf-name { font-weight: 700; line-height: 1.25; }
+    .wf-proj { color: var(--muted); font-size: .82rem; }
+    .st { display: inline-flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; white-space: nowrap; text-decoration: none; }
+    .st i { font-style: normal; width: 17px; height: 17px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: 10px; }
+    .st.ok { color: var(--ok-ink); } .st.ok i { background: var(--ok); }
+    .st.bad { color: var(--bad); } .st.bad i { background: var(--bad); }
+    .st.run { color: var(--muted); } .st.run i { background: var(--run); color: #3a2a00; }
+    .st.idle { color: var(--muted); } .st.idle i { background: var(--idle); }
+    .bars { display: flex; gap: 2px; height: 22px; margin: 14px 0 8px; }
+    .bars span { flex: 1; border-radius: 3px; background: var(--idle); }
+    .bars span.ok { background: var(--ok); } .bars span.bad { background: var(--bad); } .bars span.run { background: var(--run); }
+    .wf-foot { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .8rem; }
+    .live-note { color: var(--muted); font-size: .85rem; margin: 16px 0 0; }
+    .proj .status .st { margin-left: 8px; font-size: .8rem; }
+    @media (max-width: 960px) { .tiles, .wfs { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .tiles { grid-template-columns: 1fr 1fr; } .wfs { grid-template-columns: 1fr; } .tile { padding: 14px; } }
   </style>
 </head>
 <body>
@@ -223,7 +258,7 @@
     <nav aria-label="Main">
       <a class="hide-sm" href="#projects">Projects</a>
       <a class="hide-sm" href="#experience">Experience</a>
-      <a href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261104" target="_blank" rel="noopener">Resume</a>
+      <a href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">Resume</a>
     </nav>
   </div>
 </header>
@@ -235,12 +270,12 @@
         <p class="open"><i aria-hidden="true"></i>Open to data engineering roles in Bangalore, Chennai and Hyderabad</p>
         <h1>I build data pipelines that run themselves.</h1>
         <p class="lead">
-          I'm a Data Engineer with <b>3+ years</b> of experience. I build and run the pipelines that move company data
-          into clean, reliable tables for reports, analytics and AI, mainly on <b>Azure Databricks, PySpark, SQL and AWS</b>.
-          Below are two of my projects running live, every hour.
+          I'm a Data Engineer with <b>4+ years</b> of experience. I build and run the pipelines that move company data
+          into clean, reliable tables for reports, analytics and AI, mainly on <b>Databricks, PySpark, SQL, AWS and GCP</b>.
+          Below are three of my projects running live, every hour, including an AI agent (Google ADK + MCP) that watches the other two.
         </p>
         <div class="btns">
-          <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261104" target="_blank" rel="noopener">
+          <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download resume
           </a>
@@ -264,13 +299,34 @@
     </div>
   </div>
 
+  <section class="live" id="live" aria-labelledby="live-title">
+    <div class="wrap">
+      <div class="live-head">
+        <div>
+          <h2 id="live-title">Running right now</h2>
+          <p>My pipelines and the AI agent that watches them, read live from GitHub as you open this page.</p>
+        </div>
+        <span class="pulse" id="live-time">Live <small>loading…</small></span>
+      </div>
+      <div class="tiles" id="live-tiles">
+        <div class="tile"><div class="k">Pipelines passing now</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Runs in the last 7 days</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Failures diagnosed by AI</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Last pipeline run</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+      </div>
+      <div class="wfs" id="live-wfs"></div>
+      <p class="live-note">Each bar is one run (green passed, red failed). Full view on the
+        <a href="https://lokesh4561.github.io/pipeline-doctor/" target="_blank" rel="noopener">Pipeline Doctor dashboard</a>.</p>
+    </div>
+  </section>
+
   <section class="glance" aria-labelledby="glance-title">
     <div class="wrap">
       <h2 id="glance-title">At a glance</h2>
       <dl>
-        <div><dt>Role</dt><dd>Data Engineer, 3+ years</dd><dd class="more">Cenit Technologies (now), Infosys, Travelers Insurance</dd></div>
-        <div><dt>Main tools</dt><dd>Azure Databricks, PySpark, SQL</dd><dd class="more">Data Factory, AWS, Snowflake, dbt, Airflow</dd></div>
-        <div><dt>Certified</dt><dd>Microsoft and AWS</dd><dd class="more">Fabric Data Engineer (DP-700), AWS Data Engineer Associate</dd></div>
+        <div><dt>Role</dt><dd>Data Engineer, 4+ years</dd><dd class="more">Cenit Technologies (now), Infosys, Travelers Insurance</dd></div>
+        <div><dt>Main tools</dt><dd>Azure Databricks, PySpark, SQL</dd><dd class="more">AWS, GCP, Snowflake, dbt, Airflow, Google ADK, MCP</dd></div>
+        <div><dt>Certified</dt><dd>5 Microsoft certifications</dd><dd class="more">AI Apps and Agents (AI-103), Fabric DE (DP-700), Azure Databricks DE (DP-750)</dd></div>
         <div><dt>Looking for</dt><dd>Data Engineer roles</dd><dd class="more">Bangalore, Chennai or Hyderabad</dd></div>
       </dl>
     </div>
@@ -279,13 +335,42 @@
   <section id="projects">
     <div class="wrap">
       <h2>Projects</h2>
-      <p class="intro">The first two run by themselves every hour and have live dashboards you can open. Each project shows its pipeline from source to result, and what it proves I can do at work.</p>
+      <p class="intro">The first three run by themselves every hour and have live dashboards you can open. Each project shows its pipeline from source to result, and what it proves I can do at work.</p>
 
       <article class="proj">
         <div>
-          <span class="status">Live, updates every hour</span>
+          <span class="status" data-live="pipeline doctor">AI agent, checks every hour</span>
+          <h3>Pipeline Doctor</h3>
+          <p class="desc">An AI on-call engineer for my pipelines. When a run fails, a Google ADK agent investigates it through MCP tools, finds the root cause and opens a GitHub issue with the evidence and the fix.</p>
+          <p class="proves"><b>What it proves</b>I can build AI agents that do real data-engineering work, give them safe tools, and measure how often they are right.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://lokesh4561.github.io/pipeline-doctor/" target="_blank" rel="noopener">Open live dashboard</a>
+            <a class="btn" href="https://github.com/Lokesh4561/pipeline-doctor" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <div class="shot"><img src="assets/pipeline-doctor-dashboard.jpg" alt="Pipeline Doctor live dashboard: all workflows passing, failed runs this week, failures diagnosed and root cause accuracy" loading="lazy"></div>
+          <ol class="flow" aria-label="Agent stages">
+            <li><span>Failed run<small>GitHub Actions</small></span></li>
+            <li><span>ADK agent<small>Gemini</small></span></li>
+            <li><span>MCP tools<small>logs, commits, DB</small></span></li>
+            <li><span>Root cause<small>+ evidence</small></span></li>
+            <li><span>GitHub issue<small>with the fix</small></span></li>
+          </ol>
+          <ul>
+            <li><b>6 read-only MCP tools</b>: run logs, workflow file, recent commits, Postgres health, Databricks job runs</li>
+            <li><b>78% root cause correct</b> on 23 replayed failures, <b>5 of 5</b> real incidents from my own pipelines, ~3 s per diagnosis</li>
+            <li><b>Guardrails</b>: secrets are redacted before the model sees a log (<b>0 leaked</b> in tests); a human applies every fix</li>
+          </ul>
+          <p class="stack"><b>Built with</b> Python, Google ADK, MCP, Gemini, GitHub Actions, pytest</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status" data-live="Ingest pageviews">Live, updates every hour</span>
           <h3>Wikipedia Pulse</h3>
-          <p class="desc">A Databricks lakehouse that tracks what India reads on Wikipedia in English and 13 Indian languages, processing about 12 crore rows a day and flagging pages that suddenly become popular.</p>
+          <p class="desc">A Databricks lakehouse that tracks what India reads on Wikipedia in English and 13 Indian languages, processing about 12 crore rows a day, flagging pages that suddenly become popular and using AI to explain why.</p>
           <p class="proves"><b>What it proves</b>I can run Databricks, PySpark and Delta Lake pipelines at real scale, incrementally and reliably, the way production data platforms work.</p>
           <div class="btns">
             <a class="btn solid" href="https://lokesh4561.github.io/wikipedia-pulse/" target="_blank" rel="noopener">Open live dashboard</a>
@@ -300,20 +385,22 @@
             <li><span>Bronze<small>Auto Loader</small></span></li>
             <li><span>Silver<small>parsed + checked</small></span></li>
             <li><span>Gold<small>trends + spikes</small></span></li>
+            <li><span>AI reasons<small>Gemini + news</small></span></li>
             <li><span>Website<small>live dashboard</small></span></li>
           </ol>
           <ul>
             <li><b>Delta Lake</b> bronze, silver and gold tables with liquid clustering, orchestrated by a <b>Databricks Workflow</b></li>
             <li><b>Idempotent at every step</b>: landing skips existing files, silver uses Delta transaction versions, gold rebuilds only changed hours</li>
             <li><b>Spike detection</b> flags pages at 5&times; their 24-hour average; a self-healing ingestion step refills any missed hours</li>
+            <li><b>"Why is India reading this?"</b>: Gemini explains each trending page, grounded in cited Google News and Wikipedia sources; <b>90% correct or partly correct</b>, <b>0 made-up sources</b> on a labelled sample</li>
           </ul>
-          <p class="stack"><b>Built with</b> Databricks, PySpark, Delta Lake, Unity Catalog, GitHub Actions</p>
+          <p class="stack"><b>Built with</b> Databricks, PySpark, Delta Lake, Unity Catalog, Gemini, GitHub Actions</p>
         </div>
       </article>
 
       <article class="proj">
         <div>
-          <span class="status">Live, updates every hour</span>
+          <span class="status" data-live="Hourly air quality pipeline">Live, updates every hour</span>
           <h3>India Air Quality Pipeline</h3>
           <p class="desc">Tracks air pollution across 20 Indian cities every hour, computes the official Indian AQI and flags dangerous spikes.</p>
           <p class="proves"><b>What it proves</b>I can build a complete pipeline on my own: collecting data, checking its quality, scheduling it and showing it on a dashboard people can use.</p>
@@ -401,7 +488,8 @@
         <div>
           <h3>Data Engineer, Cenit Technologies</h3>
           <ul>
-            <li>Build and maintain <b>10+</b> production pipelines on Azure Databricks and Data Factory, over <b>10+</b> sources and <b>1 TB+</b> datasets</li>
+            <li>Build and maintain <b>10+</b> production pipelines over <b>10+</b> sources and <b>1 TB+</b> datasets, on AWS (Glue, S3, Lambda, Step Functions) and GCP (BigQuery, Dataflow, Pub/Sub, Composer)</li>
+            <li>Deliver GenAI data work: prepared <b>10,000+</b> documents for RAG (chunking, embeddings, vector indexing)</li>
             <li>Designed a Delta Lake lakehouse (bronze, silver, gold) with dimensional and Data Vault 2.0 models</li>
             <li>Tuned Spark jobs, cutting run time by <b>~30%</b> and cloud cost by <b>~15%</b>; reduced pipeline failures by <b>~30%</b></li>
           </ul>
@@ -436,11 +524,12 @@
         <div><dt>Languages</dt><dd>Python, SQL, PySpark, Scala</dd></div>
         <div><dt>Azure and Databricks</dt><dd>Databricks, Delta Lake, Data Factory, ADLS Gen2, Synapse, Fabric, Purview</dd></div>
         <div><dt>AWS</dt><dd>S3, Glue, Lambda, Step Functions, Redshift, Kinesis, EMR</dd></div>
+        <div><dt>Google Cloud</dt><dd>BigQuery, Dataflow, Pub/Sub, Composer, Dataform, Cloud Functions</dd></div>
         <div><dt>Data platforms</dt><dd>Snowflake, BigQuery, PostgreSQL, SQL Server, Oracle</dd></div>
         <div><dt>Orchestration and DevOps</dt><dd>Airflow, dbt, Git, Azure DevOps, GitHub Actions, Terraform, Docker</dd></div>
         <div><dt>Streaming</dt><dd>Kafka, Spark Structured Streaming, Kinesis, Event Hub</dd></div>
         <div><dt>Data modeling</dt><dd>Medallion (bronze, silver, gold), star schema, Data Vault 2.0, data quality checks</dd></div>
-        <div><dt>AI and GenAI</dt><dd>RAG, embeddings, pgvector, LangChain, LLM evaluation</dd></div>
+        <div><dt>AI and GenAI</dt><dd>AI agents (Google ADK, LangGraph), MCP, Gemini, RAG, embeddings, pgvector, LangChain, LLM evaluation</dd></div>
       </dl>
     </div>
   </section>
@@ -450,10 +539,11 @@
       <div>
         <h2>Certifications</h2>
         <ul class="plain">
+          <li><b>Azure AI Apps and Agents Developer Associate</b><span>AI-103</span></li>
+          <li><b>Developing AI-Enabled Database Solutions</b><span>DP-800</span></li>
+          <li><b>Azure Databricks Data Engineer Associate</b><span>DP-750</span></li>
           <li><b>Microsoft Fabric Data Engineer Associate</b><span>DP-700</span></li>
-          <li><b>AWS Certified Data Engineer, Associate</b><span>Amazon Web Services</span></li>
           <li><b>Azure Data Fundamentals</b><span>DP-900</span></li>
-          <li><b>Microsoft Certification</b><span>DP-750</span></li>
         </ul>
       </div>
       <div>
@@ -472,7 +562,7 @@
       <p>I'm looking for data engineering roles in Bangalore, Chennai or Hyderabad. Email is the fastest way to reach me.</p>
       <a class="mail" href="mailto:lokeshreddymaddali@gmail.com">lokeshreddymaddali@gmail.com</a>
       <div class="btns">
-        <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261104" target="_blank" rel="noopener">Download resume</a>
+        <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">Download resume</a>
         <a class="btn" href="https://www.linkedin.com/in/lokesh-reddy-maddali-455815446/" target="_blank" rel="noopener">LinkedIn</a>
         <a class="btn" href="https://github.com/Lokesh4561" target="_blank" rel="noopener">GitHub</a>
       </div>
@@ -542,6 +632,71 @@ document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("air-sub").innerHTML =
       'Live readings could not load right now. See them on the <a href="https://india-air-quality.streamlit.app" target="_blank" rel="noopener">live dashboard</a>.';
   });
+})();
+</script>
+<script>
+/* Live systems: reads the public GitHub API in the visitor's browser (no server). */
+(() => {
+  const API = "https://api.github.com/repos/";
+  const AQ = "Lokesh4561/india-air-quality-pipeline", WP = "Lokesh4561/wikipedia-pulse", PD = "Lokesh4561/pipeline-doctor";
+  const WATCH = [
+    { repo: AQ, name: "Hourly air quality pipeline", label: "Hourly air quality pipeline", project: "India Air Quality" },
+    { repo: WP, name: "Ingest pageviews", label: "Ingest pageviews", project: "Wikipedia Pulse" },
+    { repo: WP, name: "Publish dashboard", label: "Publish dashboard", project: "Wikipedia Pulse" },
+    { repo: PD, name: "pipeline doctor", label: "AI failure watcher", project: "Pipeline Doctor" },
+  ];
+  const DAY = 864e5;
+  const $ = (id) => document.getElementById(id);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const ago = (t) => { const m = Math.max(0, Math.round((Date.now() - new Date(t)) / 6e4));
+    return m < 60 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`; };
+  const kind = (r) => r.status !== "completed" ? "run" : r.conclusion === "success" ? "ok" : r.conclusion === "failure" ? "bad" : "idle";
+  const LABEL = { ok: ["✓", "Passing"], bad: ["✕", "Failing"], run: ["⟳", "Running"], idle: ["–", "Skipped"] };
+  const chip = (k, href) => `<a class="st ${k}" href="${esc(href)}" target="_blank" rel="noopener"><i aria-hidden="true">${LABEL[k][0]}</i>${LABEL[k][1]}</a>`;
+  const get = (u) => fetch(u, { headers: { Accept: "application/vnd.github+json" } }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+
+  async function load() {
+    try {
+      const repos = [...new Set(WATCH.map((w) => w.repo))];
+      const [runs, issues] = await Promise.all([
+        Promise.all(repos.map((r) => get(`${API}${r}/actions/runs?per_page=100`).then((d) => [r, d.workflow_runs]))).then((x) => new Map(x)),
+        get(`${API}${PD}/issues?labels=pipeline-doctor&state=all&per_page=100`).catch(() => null),
+      ]);
+      let passing = 0, total = 0, week = 0, weekOk = 0, latest = null;
+      const cards = WATCH.map((w) => {
+        const list = (runs.get(w.repo) || []).filter((r) => r.name === w.name);
+        if (!list.length) return "";
+        const last = list[0], k = kind(last);
+        total++; if (k !== "bad") passing++;
+        const wk = list.filter((r) => Date.now() - new Date(r.created_at) < 7 * DAY && r.status === "completed");
+        week += wk.length; weekOk += wk.filter((r) => r.conclusion === "success").length;
+        if (w.repo !== PD && (!latest || new Date(last.created_at) > new Date(latest))) latest = last.created_at;
+        document.querySelectorAll(`[data-live="${w.name}"]`).forEach((el) => {
+          el.innerHTML = `${el.dataset.base || (el.dataset.base = el.textContent)} ${chip(k, last.html_url)} <span style="font-weight:400">· ${ago(last.created_at)}</span>`;
+        });
+        const bars = list.slice(0, 30).reverse().map((r) => `<span class="${kind(r)}" title="#${r.run_number} · ${LABEL[kind(r)][1]} · ${new Date(r.created_at).toLocaleString()}"></span>`).join("");
+        const rate = wk.length ? Math.round(100 * wk.filter((r) => r.conclusion === "success").length / wk.length) + "% passed this week" : "";
+        return `<div class="wf"><div class="wf-top"><div><div class="wf-name">${esc(w.label)}</div><div class="wf-proj">${esc(w.project)}</div></div>${chip(k, last.html_url)}</div>
+          <div class="bars" aria-label="last ${Math.min(30, list.length)} runs">${bars}</div>
+          <div class="wf-foot"><span>${ago(last.created_at)}</span><span>${rate}</span></div></div>`;
+      }).join("");
+      $("live-wfs").innerHTML = cards;
+      const diag = issues ? issues.filter((i) => !i.pull_request) : null;
+      const tiles = [
+        ["Pipelines passing now", `${passing}/${total}`, passing === total ? "all green" : `${total - passing} failing`],
+        ["Runs in the last 7 days", week, week ? `${Math.round(100 * weekOk / week)}% passed` : ""],
+        ["Failures diagnosed by AI", diag ? diag.length : "–", diag ? `${diag.filter((i) => i.state === "closed").length} fixed and closed` : "Pipeline Doctor"],
+        ["Last pipeline run", latest ? ago(latest).replace(" ago", "") : "–", latest ? "ago, runs every hour" : ""],
+      ];
+      $("live-tiles").innerHTML = tiles.map(([k, v, n]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="n">${n}</div></div>`).join("");
+      $("live-time").innerHTML = `Live <small>updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</small>`;
+    } catch (e) {
+      $("live-time").innerHTML = `Live <small>GitHub limit reached, try again later</small>`;
+      $("live-wfs").innerHTML = `<p class="live-note">Could not load live runs right now. See the <a href="https://lokesh4561.github.io/pipeline-doctor/">Pipeline Doctor dashboard</a>.</p>`;
+    }
+  }
+  load();
+  setInterval(load, 5 * 60 * 1000);
 })();
 </script>
 </body>
