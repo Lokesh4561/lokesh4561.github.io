@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lokesh Reddy Maddali, Data Engineer (Databricks, PySpark, AWS, AI agents)</title>
+  <meta name="description" content="Lokesh Reddy Maddali, Data Engineer building production pipelines on Azure Databricks, PySpark and AWS, plus AI agents, RAG and LLM data systems. Open to roles in Bangalore, Chennai and Hyderabad.">
+  <meta property="og:title" content="Lokesh Reddy Maddali, Data Engineer">
+  <meta property="og:description" content="Production data pipelines, lakehouse platforms and AI data systems, with three projects running every hour and an AI agent that diagnoses their failures.">
+  <meta property="og:image" content="https://lokesh4561.github.io/assets/air-quality-dashboard.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%232547f4'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-weight='700' font-size='28' fill='white'>LM</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f3f5fb;
+      --ink: #12131a;
+      --muted: #555b6e;
+      --line: #dfe3ee;
+      --accent: #2547f4;
+      --accent-ink: #ffffff;
+      --accent-soft: #e8ecfe;
+      --band: #2547f4;
+      /* CPCB AQI category colours, used only on live readings */
+      --aqi-good: #2e9e4f; --aqi-sat: #8cc63f; --aqi-mod: #e8c51a;
+      --aqi-poor: #f08a24; --aqi-vpoor: #d7301f; --aqi-severe: #8f1d2c;
+      --display: "Archivo", "Segoe UI", sans-serif;
+      --body: "Archivo", "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #10121a; --surface: #1a1d29; --ink: #eef0f7; --muted: #a3a9bd;
+        --line: #2c3142; --accent: #7d93ff; --accent-ink: #0b0d16; --accent-soft: #1f2647; --band: #2a3fc4;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #10121a; --surface: #1a1d29; --ink: #eef0f7; --muted: #a3a9bd;
+      --line: #2c3142; --accent: #7d93ff; --accent-ink: #0b0d16; --accent-soft: #1f2647; --band: #2a3fc4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    img { max-width: 100%; display: block; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    @media (max-width: 520px) { .wrap { padding: 0 16px; } }
+
+    h1, h2, h3 { font-family: var(--display); font-weight: 900; letter-spacing: -0.03em; margin: 0; font-variation-settings: "wdth" 125; }
+    h1 { font-size: clamp(2.6rem, 7vw, 5.8rem); line-height: .95; max-width: 12em; text-wrap: balance; }
+    h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.05; margin-bottom: 36px; }
+    h3 { font-size: 1.6rem; line-height: 1.15; font-weight: 800; font-variation-settings: "wdth" 112; }
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* Top bar */
+    .top { padding: 22px 0; }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .name { font-family: var(--display); font-weight: 800; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
+    .top nav { display: flex; gap: 22px; align-items: center; font-size: .95rem; }
+    .top nav a { color: var(--ink); text-decoration: none; }
+    .top nav a:hover { color: var(--accent); }
+    @media (max-width: 640px) { .top nav .hide-sm { display: none; } }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px;
+      border-radius: 999px; font-weight: 600; font-size: .95rem; text-decoration: none;
+      border: 2px solid var(--ink); color: var(--ink); background: transparent;
+    }
+    .btn:hover { background: var(--ink); color: var(--bg); }
+    .btn.solid { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn.solid:hover { filter: brightness(1.08); background: var(--accent); color: var(--accent-ink); }
+    .btn svg { width: 18px; height: 18px; }
+    .btns { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    /* Hero */
+    .hero { padding: 48px 0 88px; }
+    .hero .wrap { display: grid; grid-template-columns: 1fr; gap: 44px; }
+    .open { display: inline-flex; align-items: flex-start; gap: 10px; font-weight: 600; font-size: .95rem; margin-bottom: 26px; }
+    .open i { flex: none; margin-top: .42em; width: 10px; height: 10px; border-radius: 50%; background: var(--aqi-good); box-shadow: 0 0 0 4px color-mix(in srgb, var(--aqi-good) 25%, transparent); }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 38em; margin: 26px 0 30px; }
+    .lead b { color: var(--ink); font-weight: 600; }
+
+    /* Live air panel: the one bold element */
+    .air { background: var(--surface); border-radius: 22px; padding: 26px 26px 22px; }
+    .air h2 { font-size: 1.25rem; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.01em; }
+    .air .sub { color: var(--muted); font-size: .9rem; margin: 0 0 20px; }
+    .cities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .city { border-top: 6px solid var(--line); padding-top: 12px; transition: border-color .6s ease; }
+    .city h3 { font-size: 1rem; font-weight: 600; font-family: var(--body); letter-spacing: 0; }
+    .city .aqi { font-family: var(--display); font-weight: 900; font-size: clamp(2.6rem, 5vw, 3.6rem); line-height: 1; margin: 6px 0 4px;  }
+    .city .cat { font-size: .88rem; font-weight: 600; min-height: 1.4em; }
+    .city svg { width: 100%; height: 38px; margin-top: 10px; overflow: visible; }
+    .city svg polyline { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+    .air .note { color: var(--muted); font-size: .82rem; margin: 18px 0 0; line-height: 1.5; }
+    .air .note a { color: inherit; }
+    .loaded .aqi { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+    .loaded .city:nth-child(2) .aqi { animation-delay: .12s; }
+    .loaded .city:nth-child(3) .aqi { animation-delay: .24s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 900px) {
+      .hero .wrap { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 420px) { .cities { gap: 10px; } .air { padding: 20px 16px 18px; } }
+
+    /* Sections */
+    section { padding: 80px 0; border-top: 1px solid var(--line); }
+    .intro { color: var(--muted); max-width: 40em; margin: -20px 0 40px; }
+
+    /* At a glance */
+    .glance h2 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); margin-bottom: 22px; }
+    .glance dl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 0;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+    .glance dl > div { padding: 20px 22px; border-left: 1px solid var(--line); }
+    .glance dl > div:first-child { border-left: 0; }
+    .glance dt { color: var(--muted); font-size: .88rem; margin-bottom: 4px; }
+    .glance dd { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.15rem; line-height: 1.25; }
+    .glance dd.more { font-family: var(--body); font-weight: 400; font-size: .9rem; color: var(--muted); margin-top: 4px; }
+    @media (max-width: 900px) {
+      .glance dl { grid-template-columns: 1fr 1fr; }
+      .glance dl > div:nth-child(3) { border-left: 0; }
+      .glance dl > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 480px) {
+      .glance dl { grid-template-columns: 1fr; }
+      .glance dl > div { border-left: 0; }
+      .glance dl > div + div { border-top: 1px solid var(--line); }
+    }
+    section.glance { padding: 56px 0; background: var(--band); color: #fff; border-top: 0; }
+    .glance h2 { color: #fff; }
+    .glance dl { background: transparent; border-color: rgba(255,255,255,.4); }
+    .glance dl > div { border-color: rgba(255,255,255,.4) !important; }
+    .glance dt, .glance dd.more { color: rgba(255,255,255,.82); }
+    .glance dd { color: #fff; }
+    section.glance + section { border-top: 0; }
+
+    /* Projects */
+    .proj { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; padding: 44px 0; border-top: 1px solid var(--line); }
+    .proj:first-of-type { border-top: 0; padding-top: 8px; }
+    .proj .status { display: inline-block; font-size: .85rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; }
+    .proj h3 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin-bottom: 14px; }
+    .proj .desc { color: var(--muted); margin: 0 0 18px; }
+    .proves { margin: 0 0 22px; padding: 14px 16px; border-left: 5px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; font-size: .95rem; }
+    .proves b { display: block; font-weight: 600; margin-bottom: 2px; }
+    .proj .shot { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 22px; }
+    .proj ul { margin: 22px 0 18px; padding-left: 20px; }
+    .proj li { margin-bottom: 8px; }
+    .proj li::marker { color: var(--accent); }
+    .stack { font-size: .92rem; color: var(--muted); margin: 0; }
+    .stack b { color: var(--ink); font-weight: 600; }
+
+    /* Pipeline flow: real sequences, so they are drawn as connected stages */
+    .flow { list-style: none; margin: 0; padding: 0; display: flex; align-items: stretch; }
+    .flow li { display: flex; align-items: center; flex: 1 1 0; min-width: 0; margin: 0; }
+    .flow li + li::before { content: ""; flex: 0 0 14px; height: 2px; background: var(--accent); }
+    .flow span {
+      display: block; width: 100%; height: 100%; padding: 8px 10px; border-radius: 8px; font-size: .84rem; line-height: 1.25;
+      background: var(--surface); border: 1.5px solid var(--line); font-weight: 600; overflow-wrap: break-word; hyphens: auto; border-radius: 4px;
+    }
+    .flow span small { display: block; font-weight: 400; color: var(--muted); font-size: .76rem; }
+    .flow li:last-child span { border-color: var(--accent); }
+    @media (max-width: 820px) {
+      .proj { grid-template-columns: 1fr; gap: 20px; }
+    }
+    @media (max-width: 560px) {
+      .flow { flex-direction: column; }
+      .flow li { flex-direction: column; align-items: flex-start; }
+      .flow li + li::before { flex-basis: 14px; width: 2px; height: 14px; margin-left: 18px; }
+    }
+
+    /* Experience timeline */
+    .job { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 28px 0; border-top: 1px solid var(--line); }
+    .job:first-of-type { border-top: 0; padding-top: 0; }
+    .job .when { color: var(--muted); font-size: .95rem; }
+    .job .when b { display: block; color: var(--ink); font-weight: 600; }
+    .job h3 { font-size: 1.35rem; margin-bottom: 10px; }
+    .job ul { margin: 0; padding-left: 20px; }
+    .job li { margin-bottom: 6px; }
+    .job li::marker { color: var(--accent); }
+    @media (max-width: 700px) { .job { grid-template-columns: 1fr; gap: 6px; } }
+
+    /* Skills, certifications, education */
+    .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; margin: 0; }
+    .skills dt { font-family: var(--display); font-weight: 800; font-size: 1.1rem; margin-bottom: 6px; }
+    .skills dd { margin: 0; color: var(--muted); }
+    @media (max-width: 820px) { .skills { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .skills { grid-template-columns: 1fr; } }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .two h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 20px; }
+    .plain { list-style: none; margin: 0; padding: 0; }
+    .plain li { padding: 14px 0; border-top: 1px solid var(--line); }
+    .plain li:first-child { border-top: 0; padding-top: 0; }
+    .plain b { display: block; font-weight: 600; }
+    .plain span { color: var(--muted); font-size: .93rem; }
+    @media (max-width: 700px) { .two { grid-template-columns: 1fr; gap: 56px; } }
+
+    /* Contact */
+    .contact { padding: 96px 0 72px; }
+    .contact p { color: var(--muted); max-width: 34em; margin: 0 0 22px; }
+    .mail {
+      font-family: var(--display); font-weight: 900; font-size: clamp(1.5rem, 4.6vw, 3.2rem);
+      letter-spacing: -0.02em; color: var(--ink); text-decoration-color: var(--accent);
+      text-decoration-thickness: 4px; overflow-wrap: anywhere; display: inline-block; margin-bottom: 30px;
+    }
+    .mail:hover { color: var(--accent); }
+    footer { padding: 28px 0 40px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+    /* Live systems: same language as the Pipeline Doctor dashboard */
+    :root { --ok: #0ca30c; --ok-ink: #006300; --bad: #d03b3b; --run: #fab219; --idle: #a9a8a2; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ok-ink: #4cc94c; --idle: #5d5c57; } }
+    :root[data-theme="dark"] { --ok-ink: #4cc94c; --idle: #5d5c57; }
+    section.live { padding: 64px 0 72px; background: var(--surface); border-top: 0; }
+    .live-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 26px; }
+    .live-head h2 { margin: 0; font-size: clamp(1.8rem, 3.6vw, 2.6rem); }
+    .live-head p { margin: 6px 0 0; color: var(--muted); max-width: 36em; }
+    .pulse { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .9rem; color: var(--ok-ink); white-space: nowrap; }
+    .pulse::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); animation: blink 2s infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
+    .pulse small { color: var(--muted); font-weight: 400; margin-left: 4px; }
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+    .tile, .wf { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+    .tile .k { color: var(--muted); font-size: .88rem; }
+    .tile .v { font-family: var(--display); font-weight: 900; font-size: clamp(1.9rem, 3.4vw, 2.5rem); line-height: 1.1; margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+    .tile .n { color: var(--muted); font-size: .82rem; }
+    .wfs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .wf-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+    .wf-name { font-weight: 700; line-height: 1.25; }
+    .wf-proj { color: var(--muted); font-size: .82rem; }
+    .st { display: inline-flex; align-items: center; gap: 5px; font-size: .82rem; font-weight: 700; white-space: nowrap; text-decoration: none; }
+    .st i { font-style: normal; width: 17px; height: 17px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: 10px; }
+    .st.ok { color: var(--ok-ink); } .st.ok i { background: var(--ok); }
+    .st.bad { color: var(--bad); } .st.bad i { background: var(--bad); }
+    .st.run { color: var(--muted); } .st.run i { background: var(--run); color: #3a2a00; }
+    .st.idle { color: var(--muted); } .st.idle i { background: var(--idle); }
+    .bars { display: flex; gap: 2px; height: 22px; margin: 14px 0 8px; }
+    .bars span { flex: 1; border-radius: 3px; background: var(--idle); }
+    .bars span.ok { background: var(--ok); } .bars span.bad { background: var(--bad); } .bars span.run { background: var(--run); }
+    .wf-foot { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .8rem; }
+    .live-note { color: var(--muted); font-size: .85rem; margin: 16px 0 0; }
+    .proj .status .st { margin-left: 8px; font-size: .8rem; }
+    @media (max-width: 960px) { .tiles, .wfs { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .tiles { grid-template-columns: 1fr 1fr; } .wfs { grid-template-columns: 1fr; } .tile { padding: 14px; } }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="name" href="#top">Lokesh Reddy Maddali</a>
+    <nav aria-label="Main">
+      <a class="hide-sm" href="#projects">Projects</a>
+      <a class="hide-sm" href="#experience">Experience</a>
+      <a href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="open"><i aria-hidden="true"></i>Open to data engineering roles in Bangalore, Chennai and Hyderabad</p>
+        <h1>I build data pipelines that run themselves.</h1>
+        <p class="lead">
+          I'm a Data Engineer with <b>4+ years</b> of experience. I build and run the pipelines that move company data
+          into clean, reliable tables for reports, analytics and AI, mainly on <b>Databricks, PySpark, SQL, AWS and GCP</b>.
+          Below are three of my projects running live, every hour, including an AI agent (Google ADK + MCP) that watches the other two.
+        </p>
+        <div class="btns">
+          <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download resume
+          </a>
+          <a class="btn" href="mailto:lokeshreddymaddali@gmail.com">Email me</a>
+          <a class="btn" href="https://github.com/Lokesh4561" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="https://www.linkedin.com/in/lokesh-reddy-maddali-455815446/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+
+      <aside class="air" id="air" aria-labelledby="air-title">
+        <h2 id="air-title">The air in those cities, right now</h2>
+        <p class="sub" id="air-sub">Indian AQI (CPCB), loading live data…</p>
+        <div class="cities">
+          <div class="city" data-lat="12.9716" data-lon="77.5946"><h3>Bangalore</h3><div class="aqi num">–</div><div class="cat"></div><svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg></div>
+          <div class="city" data-lat="13.0827" data-lon="80.2707"><h3>Chennai</h3><div class="aqi num">–</div><div class="cat"></div><svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg></div>
+          <div class="city" data-lat="17.3850" data-lon="78.4867"><h3>Hyderabad</h3><div class="aqi num">–</div><div class="cat"></div><svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg></div>
+        </div>
+        <p class="note">Calculated in your browser from 24-hour PM2.5 and PM10 averages, using the same data source and CPCB formula as my
+          <a href="https://india-air-quality.streamlit.app" target="_blank" rel="noopener">air quality pipeline</a>. Lines show the last 24 hours.</p>
+      </aside>
+    </div>
+  </div>
+
+  <section class="live" id="live" aria-labelledby="live-title">
+    <div class="wrap">
+      <div class="live-head">
+        <div>
+          <h2 id="live-title">Running right now</h2>
+          <p>My pipelines and the AI agent that watches them, read live from GitHub as you open this page.</p>
+        </div>
+        <span class="pulse" id="live-time">Live <small>loading…</small></span>
+      </div>
+      <div class="tiles" id="live-tiles">
+        <div class="tile"><div class="k">Pipelines passing now</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Runs in the last 7 days</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Failures diagnosed by AI</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+        <div class="tile"><div class="k">Last pipeline run</div><div class="v">–</div><div class="n">&nbsp;</div></div>
+      </div>
+      <div class="wfs" id="live-wfs"></div>
+      <p class="live-note">Each bar is one run (green passed, red failed). Full view on the
+        <a href="https://lokesh4561.github.io/pipeline-doctor/" target="_blank" rel="noopener">Pipeline Doctor dashboard</a>.</p>
+    </div>
+  </section>
+
+  <section class="glance" aria-labelledby="glance-title">
+    <div class="wrap">
+      <h2 id="glance-title">At a glance</h2>
+      <dl>
+        <div><dt>Role</dt><dd>Data Engineer, 4+ years</dd><dd class="more">Cenit Technologies (now), Infosys, Travelers Insurance</dd></div>
+        <div><dt>Main tools</dt><dd>Azure Databricks, PySpark, SQL</dd><dd class="more">AWS, GCP, Snowflake, dbt, Airflow, Google ADK, MCP</dd></div>
+        <div><dt>Certified</dt><dd>5 Microsoft certifications</dd><dd class="more">AI Apps and Agents (AI-103), Fabric DE (DP-700), Azure Databricks DE (DP-750)</dd></div>
+        <div><dt>Looking for</dt><dd>Data Engineer roles</dd><dd class="more">Bangalore, Chennai or Hyderabad</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <h2>Projects</h2>
+      <p class="intro">The first three run by themselves every hour and have live dashboards you can open. Each project shows its pipeline from source to result, and what it proves I can do at work.</p>
+
+      <article class="proj">
+        <div>
+          <span class="status" data-live="pipeline doctor">AI agent, checks every hour</span>
+          <h3>Pipeline Doctor</h3>
+          <p class="desc">An AI on-call engineer for my pipelines. When a run fails, a Google ADK agent investigates it through MCP tools, finds the root cause and opens a GitHub issue with the evidence and the fix.</p>
+          <p class="proves"><b>What it proves</b>I can build AI agents that do real data-engineering work, give them safe tools, and measure how often they are right.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://lokesh4561.github.io/pipeline-doctor/" target="_blank" rel="noopener">Open live dashboard</a>
+            <a class="btn" href="https://github.com/Lokesh4561/pipeline-doctor" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <div class="shot"><img src="assets/pipeline-doctor-dashboard.jpg" alt="Pipeline Doctor live dashboard: all workflows passing, failed runs this week, failures diagnosed and root cause accuracy" loading="lazy"></div>
+          <ol class="flow" aria-label="Agent stages">
+            <li><span>Failed run<small>GitHub Actions</small></span></li>
+            <li><span>ADK agent<small>Gemini</small></span></li>
+            <li><span>MCP tools<small>logs, commits, DB</small></span></li>
+            <li><span>Root cause<small>+ evidence</small></span></li>
+            <li><span>GitHub issue<small>with the fix</small></span></li>
+          </ol>
+          <ul>
+            <li><b>6 read-only MCP tools</b>: run logs, workflow file, recent commits, Postgres health, Databricks job runs</li>
+            <li><b>78% root cause correct</b> on 23 replayed failures, <b>5 of 5</b> real incidents from my own pipelines, ~3 s per diagnosis</li>
+            <li><b>Guardrails</b>: secrets are redacted before the model sees a log (<b>0 leaked</b> in tests); a human applies every fix</li>
+          </ul>
+          <p class="stack"><b>Built with</b> Python, Google ADK, MCP, Gemini, GitHub Actions, pytest</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status" data-live="Ingest pageviews">Live, updates every hour</span>
+          <h3>Wikipedia Pulse</h3>
+          <p class="desc">A Databricks lakehouse that tracks what India reads on Wikipedia in English and 13 Indian languages, processing about 12 crore rows a day, flagging pages that suddenly become popular and using AI to explain why.</p>
+          <p class="proves"><b>What it proves</b>I can run Databricks, PySpark and Delta Lake pipelines at real scale, incrementally and reliably, the way production data platforms work.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://lokesh4561.github.io/wikipedia-pulse/" target="_blank" rel="noopener">Open live dashboard</a>
+            <a class="btn" href="https://github.com/Lokesh4561/wikipedia-pulse" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <div class="shot"><img src="assets/wikipedia-pulse-dashboard.jpg" alt="Wikipedia Pulse dashboard showing what India is reading, with language tabs in Indian scripts" loading="lazy"></div>
+          <ol class="flow" aria-label="Pipeline stages">
+            <li><span>Wikimedia<small>hourly dumps</small></span></li>
+            <li><span>GitHub Actions<small>lands files</small></span></li>
+            <li><span>Bronze<small>Auto Loader</small></span></li>
+            <li><span>Silver<small>parsed + checked</small></span></li>
+            <li><span>Gold<small>trends + spikes</small></span></li>
+            <li><span>AI reasons<small>Gemini + news</small></span></li>
+            <li><span>Website<small>live dashboard</small></span></li>
+          </ol>
+          <ul>
+            <li><b>Delta Lake</b> bronze, silver and gold tables with liquid clustering, orchestrated by a <b>Databricks Workflow</b></li>
+            <li><b>Idempotent at every step</b>: landing skips existing files, silver uses Delta transaction versions, gold rebuilds only changed hours</li>
+            <li><b>Spike detection</b> flags pages at 5&times; their 24-hour average; a self-healing ingestion step refills any missed hours</li>
+            <li><b>"Why is India reading this?"</b>: Gemini explains each trending page, grounded in cited Google News and Wikipedia sources; <b>90% correct or partly correct</b>, <b>0 made-up sources</b> on a labelled sample</li>
+          </ul>
+          <p class="stack"><b>Built with</b> Databricks, PySpark, Delta Lake, Unity Catalog, Gemini, GitHub Actions</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status" data-live="Hourly air quality pipeline">Live, updates every hour</span>
+          <h3>India Air Quality Pipeline</h3>
+          <p class="desc">Tracks air pollution across 20 Indian cities every hour, computes the official Indian AQI and flags dangerous spikes.</p>
+          <p class="proves"><b>What it proves</b>I can build a complete pipeline on my own: collecting data, checking its quality, scheduling it and showing it on a dashboard people can use.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://india-air-quality.streamlit.app" target="_blank" rel="noopener">Open live dashboard</a>
+            <a class="btn" href="https://github.com/Lokesh4561/india-air-quality-pipeline" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <div class="shot"><img src="assets/air-quality-dashboard.jpg" alt="India Air Quality dashboard with a map of Indian cities, an AQI ranking and history charts" loading="lazy"></div>
+          <ol class="flow" aria-label="Pipeline stages">
+            <li><span>Open-Meteo API<small>20 cities, 1 request</small></span></li>
+            <li><span>Bronze<small>raw JSON</small></span></li>
+            <li><span>Silver<small>hourly readings</small></span></li>
+            <li><span>Gold<small>CPCB AQI</small></span></li>
+            <li><span>Alerts + dashboard<small>Streamlit</small></span></li>
+          </ol>
+          <ul>
+            <li><b>Idempotent upserts</b> and the official <b>CPCB AQI</b> formula on 24-hour averages</li>
+            <li><b>Automated data quality checks</b>, z-score spike alerts and forecast accuracy tracking</li>
+            <li>Batched API calls cut each run from <b>282s to 32s</b>; runs free on GitHub Actions</li>
+          </ul>
+          <p class="stack"><b>Built with</b> Python, PostgreSQL, pandas, GitHub Actions, Streamlit</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status">ML pipeline, Kubeflow, retrains weekly</span>
+          <h3>PM2.5 Forecasting on Kubeflow</h3>
+          <p class="desc">A Kubeflow ML pipeline that forecasts air pollution (PM2.5) 3 hours ahead for 20 Indian cities. A new model goes live only if it beats a simple baseline.</p>
+          <p class="proves"><b>What it proves</b>I can build production-style ML pipelines on Kubeflow: data quality gates, honest evaluation, automatic promotion and serving, with CI/CD.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://github.com/Lokesh4561/aq-forecast-kubeflow" target="_blank" rel="noopener">View code and results</a>
+          </div>
+        </div>
+        <div>
+          <ol class="flow" aria-label="Pipeline stages">
+            <li><span>Ingest<small>20 cities, 60 days</small></span></li>
+            <li><span>Validate<small>quality gate</small></span></li>
+            <li><span>Train<small>gradient boosting</small></span></li>
+            <li><span>Evaluate<small>vs baseline</small></span></li>
+            <li><span>Publish + serve<small>FastAPI</small></span></li>
+          </ol>
+          <ul>
+            <li><b>28.5% more accurate</b> than the baseline (MAE <b>7.24 vs 10.12</b> µg/m³) on the last 7 days held out</li>
+            <li><b>Kubeflow Pipelines v2</b> with artifacts, metrics and a conditional publish step (<code>dsl.If</code>)</li>
+            <li>Runs locally and in <b>GitHub Actions</b> (weekly retraining); the same compiled pipeline is ready for <b>Vertex AI Pipelines</b></li>
+          </ul>
+          <p class="stack"><b>Built with</b> Kubeflow (KFP v2), Python, pandas, scikit-learn, FastAPI, GitHub Actions</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status">AI, retrieval-augmented generation</span>
+          <h3>DocQA: RAG Platform</h3>
+          <p class="desc">Ask questions about a document collection and get answers with citations, backed by a measured retrieval pipeline.</p>
+          <p class="proves"><b>What it proves</b>I can build AI data systems (RAG, embeddings, vector search) and measure how well they work, not just call an LLM.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://github.com/Lokesh4561/rag-docqa-platform" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <ol class="flow" aria-label="Pipeline stages">
+            <li><span>Documents<small>Wikipedia articles</small></span></li>
+            <li><span>Chunk + embed<small>sentence-transformers</small></span></li>
+            <li><span>pgvector<small>HNSW index</small></span></li>
+            <li><span>Retrieve<small>top-k chunks</small></span></li>
+            <li><span>LLM answer<small>with citations</small></span></li>
+          </ol>
+          <ul>
+            <li><b>Idempotent ingestion</b>: chunking, embeddings and an HNSW vector index in pgvector</li>
+            <li>FastAPI service returning <b>cited LLM answers</b></li>
+            <li>98-question evaluation set: <b>hit@1 97.96%</b>, <b>MRR 0.98</b></li>
+          </ul>
+          <p class="stack"><b>Built with</b> Python, FastAPI, PostgreSQL, pgvector, sentence-transformers, Groq</p>
+        </div>
+      </article>
+
+      <article class="proj">
+        <div>
+          <span class="status">Streaming</span>
+          <h3>Kafka Stock Market Stream</h3>
+          <p class="desc">A real-time pipeline where a Python producer publishes stock price events to a Kafka topic and a consumer processes them as they arrive.</p>
+          <p class="proves"><b>What it proves</b>I understand event streaming with Kafka: producing and consuming real-time data.</p>
+          <div class="btns">
+            <a class="btn solid" href="https://github.com/Lokesh4561/kafka-stock-market-project" target="_blank" rel="noopener">View code</a>
+          </div>
+        </div>
+        <div>
+          <ol class="flow" aria-label="Pipeline stages">
+            <li><span>Producer<small>stock ticks</small></span></li>
+            <li><span>Kafka topic</span></li>
+            <li><span>Consumer<small>Python</small></span></li>
+          </ol>
+          <ul>
+            <li>Event-driven <b>producer and consumer</b> design with Apache Kafka</li>
+            <li>Next step: land events in an <b>S3 data lake</b> for Athena queries</li>
+          </ul>
+          <p class="stack"><b>Built with</b> Python, Apache Kafka, AWS</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <h2>Experience</h2>
+      <div class="job">
+        <div class="when"><b>Oct 2025 – now</b>Bangalore, India</div>
+        <div>
+          <h3>Data Engineer, Cenit Technologies</h3>
+          <ul>
+            <li>Build and maintain <b>10+</b> production pipelines over <b>10+</b> sources and <b>1 TB+</b> datasets, on AWS (Glue, S3, Lambda, Step Functions) and GCP (BigQuery, Dataflow, Pub/Sub, Composer)</li>
+            <li>Deliver GenAI data work: prepared <b>10,000+</b> documents for RAG (chunking, embeddings, vector indexing)</li>
+            <li>Designed a Delta Lake lakehouse (bronze, silver, gold) with dimensional and Data Vault 2.0 models</li>
+            <li>Tuned Spark jobs, cutting run time by <b>~30%</b> and cloud cost by <b>~15%</b>; reduced pipeline failures by <b>~30%</b></li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="when"><b>Aug 2024 – Sep 2025</b>USA</div>
+        <div>
+          <h3>Data Engineering Intern, Travelers Insurance</h3>
+          <ul>
+            <li>Built Python and SQL ETL pipelines for insurance policy and claims data across <b>5+</b> datasets, with validation and reconciliation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="when"><b>Jan 2022 – Dec 2023</b>Chennai, India</div>
+        <div>
+          <h3>Data Engineer, Infosys</h3>
+          <ul>
+            <li>Designed and maintained <b>10+</b> ETL pipelines across legacy systems and stored procedures</li>
+            <li>Cut ETL processing time by <b>35%</b> through SQL optimization; delivered data for a dashboard used by <b>10+</b> stakeholders</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <h2>Skills</h2>
+      <dl class="skills">
+        <div><dt>Languages</dt><dd>Python, SQL, PySpark, Scala</dd></div>
+        <div><dt>Azure and Databricks</dt><dd>Databricks, Delta Lake, Data Factory, ADLS Gen2, Synapse, Fabric, Purview</dd></div>
+        <div><dt>AWS</dt><dd>S3, Glue, Lambda, Step Functions, Redshift, Kinesis, EMR</dd></div>
+        <div><dt>Google Cloud</dt><dd>BigQuery, Dataflow, Pub/Sub, Composer, Dataform, Cloud Functions</dd></div>
+        <div><dt>Data platforms</dt><dd>Snowflake, BigQuery, PostgreSQL, SQL Server, Oracle</dd></div>
+        <div><dt>Orchestration and DevOps</dt><dd>Airflow, dbt, Git, Azure DevOps, GitHub Actions, Terraform, Docker</dd></div>
+        <div><dt>Streaming</dt><dd>Kafka, Spark Structured Streaming, Kinesis, Event Hub</dd></div>
+        <div><dt>Data modeling</dt><dd>Medallion (bronze, silver, gold), star schema, Data Vault 2.0, data quality checks</dd></div>
+        <div><dt>AI and GenAI</dt><dd>AI agents (Google ADK, LangGraph), MCP, Gemini, RAG, embeddings, pgvector, LangChain, LLM evaluation</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="credentials">
+    <div class="wrap two">
+      <div>
+        <h2>Certifications</h2>
+        <ul class="plain">
+          <li><b>Azure AI Apps and Agents Developer Associate</b><span>AI-103</span></li>
+          <li><b>Developing AI-Enabled Database Solutions</b><span>DP-800</span></li>
+          <li><b>Azure Databricks Data Engineer Associate</b><span>DP-750</span></li>
+          <li><b>Microsoft Fabric Data Engineer Associate</b><span>DP-700</span></li>
+          <li><b>Azure Data Fundamentals</b><span>DP-900</span></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Education</h2>
+        <ul class="plain">
+          <li><b>Master's in Information Technology</b><span>Webster University, USA, 2024 – 2025</span></li>
+          <li><b>B.E., Electronics and Communication</b><span>R.M.D. Engineering College, Chennai, 2021</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <h2>Let's talk</h2>
+      <p>I'm looking for data engineering roles in Bangalore, Chennai or Hyderabad. Email is the fastest way to reach me.</p>
+      <a class="mail" href="mailto:lokeshreddymaddali@gmail.com">lokeshreddymaddali@gmail.com</a>
+      <div class="btns">
+        <a class="btn solid" href="assets/Lokesh_Reddy_Maddali_Resume.pdf?v=20261116" target="_blank" rel="noopener">Download resume</a>
+        <a class="btn" href="https://www.linkedin.com/in/lokesh-reddy-maddali-455815446/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/Lokesh4561" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year">2026</span> Lokesh Reddy Maddali. Hand-built in HTML and CSS, hosted on GitHub Pages.</div>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Live Indian AQI (CPCB) for three cities, same breakpoints as aq/aqi.py in the pipeline repo.
+(function () {
+  const BP = {
+    pm2_5: [[0, 30, 0, 50], [30, 60, 50, 100], [60, 90, 100, 200], [90, 120, 200, 300], [120, 250, 300, 400], [250, 380, 400, 500]],
+    pm10: [[0, 50, 0, 50], [50, 100, 50, 100], [100, 250, 100, 200], [250, 350, 200, 300], [350, 430, 300, 400], [430, 510, 400, 500]],
+  };
+  const CATS = [[50, "Good", "--aqi-good"], [100, "Satisfactory", "--aqi-sat"], [200, "Moderate", "--aqi-mod"],
+                [300, "Poor", "--aqi-poor"], [400, "Very poor", "--aqi-vpoor"], [500, "Severe", "--aqi-severe"]];
+
+  const sub = (p, c) => {
+    if (c == null || c < 0) return null;
+    for (const [cl, ch, il, ih] of BP[p]) if (c <= ch) return Math.round(il + (ih - il) * (c - cl) / (ch - cl));
+    return 500;
+  };
+  const avg = a => { const v = a.filter(x => x != null); return v.length >= 16 ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+  const aqiAt = (pm25, pm10, end) => {
+    const s = [sub("pm2_5", avg(pm25.slice(end - 24, end))), sub("pm10", avg(pm10.slice(end - 24, end)))].filter(x => x != null);
+    return s.length ? Math.max(...s) : null;
+  };
+
+  const panel = document.getElementById("air");
+  const cities = [...panel.querySelectorAll(".city")];
+  const url = "https://air-quality-api.open-meteo.com/v1/air-quality?hourly=pm2_5,pm10&timezone=Asia%2FKolkata&past_days=2&forecast_days=1"
+    + "&latitude=" + cities.map(c => c.dataset.lat).join(",") + "&longitude=" + cities.map(c => c.dataset.lon).join(",");
+
+  fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(data => {
+    const list = Array.isArray(data) ? data : [data];
+    let updated = null;
+    list.forEach((loc, i) => {
+      const h = loc.hourly, now = Date.now();
+      // Times are IST without an offset; count observed hours only
+      let n = h.time.filter(t => new Date(t + ":00+05:30").getTime() <= now).length;
+      while (n > 0 && h.pm2_5[n - 1] == null && h.pm10[n - 1] == null) n--;
+      const series = [];
+      for (let end = Math.max(24, n - 23); end <= n; end++) series.push(aqiAt(h.pm2_5, h.pm10, end));
+      const aqi = series[series.length - 1];
+      const el = cities[i];
+      if (aqi == null) return;
+      const [, label, color] = CATS.find(([max]) => aqi <= max) || CATS[5];
+      el.querySelector(".aqi").textContent = aqi;
+      el.querySelector(".cat").textContent = label;
+      el.style.borderTopColor = `var(${color})`;
+      const pts = series.filter(v => v != null), lo = Math.min(...pts), hi = Math.max(...pts), span = Math.max(hi - lo, 10);
+      el.querySelector("polyline").setAttribute("points",
+        pts.map((v, k) => `${(k / Math.max(pts.length - 1, 1) * 100).toFixed(1)},${(28 - (v - lo) / span * 26).toFixed(1)}`).join(" "));
+      updated = h.time[n - 1];
+    });
+    if (!updated) throw new Error("no data");
+    const t = new Date(updated + ":00+05:30").toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
+    document.getElementById("air-sub").textContent = `Indian AQI (CPCB), updated ${t} IST`;
+    panel.classList.add("loaded");
+  }).catch(() => {
+    document.getElementById("air-sub").innerHTML =
+      'Live readings could not load right now. See them on the <a href="https://india-air-quality.streamlit.app" target="_blank" rel="noopener">live dashboard</a>.';
+  });
+})();
+</script>
+<script>
+/* Live systems: reads the public GitHub API in the visitor's browser (no server). */
+(() => {
+  const API = "https://api.github.com/repos/";
+  const AQ = "Lokesh4561/india-air-quality-pipeline", WP = "Lokesh4561/wikipedia-pulse", PD = "Lokesh4561/pipeline-doctor";
+  const WATCH = [
+    { repo: AQ, name: "Hourly air quality pipeline", label: "Hourly air quality pipeline", project: "India Air Quality" },
+    { repo: WP, name: "Ingest pageviews", label: "Ingest pageviews", project: "Wikipedia Pulse" },
+    { repo: WP, name: "Publish dashboard", label: "Publish dashboard", project: "Wikipedia Pulse" },
+    { repo: PD, name: "pipeline doctor", label: "AI failure watcher", project: "Pipeline Doctor" },
+  ];
+  const DAY = 864e5;
+  const $ = (id) => document.getElementById(id);
+  const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const ago = (t) => { const m = Math.max(0, Math.round((Date.now() - new Date(t)) / 6e4));
+    return m < 60 ? `${m} min ago` : m < 2880 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} days ago`; };
+  const kind = (r) => r.status !== "completed" ? "run" : r.conclusion === "success" ? "ok" : r.conclusion === "failure" ? "bad" : "idle";
+  const LABEL = { ok: ["✓", "Passing"], bad: ["✕", "Failing"], run: ["⟳", "Running"], idle: ["–", "Skipped"] };
+  const chip = (k, href) => `<a class="st ${k}" href="${esc(href)}" target="_blank" rel="noopener"><i aria-hidden="true">${LABEL[k][0]}</i>${LABEL[k][1]}</a>`;
+  const get = (u) => fetch(u, { headers: { Accept: "application/vnd.github+json" } }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+
+  async function load() {
+    try {
+      const repos = [...new Set(WATCH.map((w) => w.repo))];
+      const [runs, issues] = await Promise.all([
+        Promise.all(repos.map((r) => get(`${API}${r}/actions/runs?per_page=100`).then((d) => [r, d.workflow_runs]))).then((x) => new Map(x)),
+        get(`${API}${PD}/issues?labels=pipeline-doctor&state=all&per_page=100`).catch(() => null),
+      ]);
+      let passing = 0, total = 0, week = 0, weekOk = 0, latest = null;
+      const cards = WATCH.map((w) => {
+        const list = (runs.get(w.repo) || []).filter((r) => r.name === w.name);
+        if (!list.length) return "";
+        const last = list[0], k = kind(last);
+        total++; if (k !== "bad") passing++;
+        const wk = list.filter((r) => Date.now() - new Date(r.created_at) < 7 * DAY && r.status === "completed");
+        week += wk.length; weekOk += wk.filter((r) => r.conclusion === "success").length;
+        if (w.repo !== PD && (!latest || new Date(last.created_at) > new Date(latest))) latest = last.created_at;
+        document.querySelectorAll(`[data-live="${w.name}"]`).forEach((el) => {
+          el.innerHTML = `${el.dataset.base || (el.dataset.base = el.textContent)} ${chip(k, last.html_url)} <span style="font-weight:400">· ${ago(last.created_at)}</span>`;
+        });
+        const bars = list.slice(0, 30).reverse().map((r) => `<span class="${kind(r)}" title="#${r.run_number} · ${LABEL[kind(r)][1]} · ${new Date(r.created_at).toLocaleString()}"></span>`).join("");
+        const rate = wk.length ? Math.round(100 * wk.filter((r) => r.conclusion === "success").length / wk.length) + "% passed this week" : "";
+        return `<div class="wf"><div class="wf-top"><div><div class="wf-name">${esc(w.label)}</div><div class="wf-proj">${esc(w.project)}</div></div>${chip(k, last.html_url)}</div>
+          <div class="bars" aria-label="last ${Math.min(30, list.length)} runs">${bars}</div>
+          <div class="wf-foot"><span>${ago(last.created_at)}</span><span>${rate}</span></div></div>`;
+      }).join("");
+      $("live-wfs").innerHTML = cards;
+      const diag = issues ? issues.filter((i) => !i.pull_request) : null;
+      const tiles = [
+        ["Pipelines passing now", `${passing}/${total}`, passing === total ? "all green" : `${total - passing} failing`],
+        ["Runs in the last 7 days", week, week ? `${Math.round(100 * weekOk / week)}% passed` : ""],
+        ["Failures diagnosed by AI", diag ? diag.length : "–", diag ? `${diag.filter((i) => i.state === "closed").length} fixed and closed` : "Pipeline Doctor"],
+        ["Last pipeline run", latest ? ago(latest).replace(" ago", "") : "–", latest ? "ago, runs every hour" : ""],
+      ];
+      $("live-tiles").innerHTML = tiles.map(([k, v, n]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="n">${n}</div></div>`).join("");
+      $("live-time").innerHTML = `Live <small>updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</small>`;
+    } catch (e) {
+      $("live-time").innerHTML = `Live <small>GitHub limit reached, try again later</small>`;
+      $("live-wfs").innerHTML = `<p class="live-note">Could not load live runs right now. See the <a href="https://lokesh4561.github.io/pipeline-doctor/">Pipeline Doctor dashboard</a>.</p>`;
+    }
+  }
+  load();
+  setInterval(load, 5 * 60 * 1000);
+})();
+</script>
+</body>
+</html>
